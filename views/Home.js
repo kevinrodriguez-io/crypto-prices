@@ -1,22 +1,20 @@
 import React from "react";
 import {
   SafeAreaView,
-  View,
   StatusBar,
   StyleSheet,
   ScrollView,
   Text,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import { Colors } from "@kevinrodriguez-io/pigment-core";
-
-import { CenteredContainer } from "../components/CenteredContainer";
 
 import { useCryptoPrices } from "../hooks/useCryptoPrices";
 import { CryptoCurrencyCard } from "../components/CryptoCurrencyCard";
 
 export const Home = () => {
-  const { data, error } = useCryptoPrices([
+  const { data, error, mutate } = useCryptoPrices([
     "bitcoin",
     "ethereum",
     "solana",
@@ -25,25 +23,31 @@ export const Home = () => {
   const isLoading = !data && !error;
   return (
     <SafeAreaView style={[styles.androidSafeArea, styles.homeContainer]}>
-      <Text style={styles.title}>Crypto Prices</Text>
-      {isLoading ? (
-        <ActivityIndicator
-          color={Colors.flatWhite.light}
-          size="large"
-          style={{ flex: 1 }}
-        />
-      ) : (
-        <ScrollView>
-          {Object.entries(data).map(([crypto, { usd, usd_24h_change }]) => (
+      <Text style={styles.title}>Precios crypto</Text>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            tintColor={Colors.flatPowderBlue.light}
+            refreshing={isLoading}
+            onRefresh={() => {
+              mutate();
+            }}
+          />
+        }
+      >
+        {data ? (
+          Object.entries(data).map(([crypto, { usd, usd_24h_change }]) => (
             <CryptoCurrencyCard
               key={crypto}
               cryptoCurrencyName={crypto}
               currentPrice={usd}
               dailyChange={usd_24h_change}
             />
-          ))}
-        </ScrollView>
-      )}
+          ))
+        ) : (
+          <ActivityIndicator size="large" color={Colors.flatPowderBlue.light} />
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -54,13 +58,13 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   homeContainer: {
-    backgroundColor: Colors.flatBlue.dark,
+    backgroundColor: Colors.flatWhite.light,
   },
   title: {
     fontSize: 36,
     fontWeight: "bold",
     padding: 16,
-    color: Colors.flatWhite.light,
+    color: Colors.flatBlack.dark,
   },
   container: {
     padding: 24,

@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   cryptoCurrencyCard: {
     margin: 12,
     padding: 24,
-    backgroundColor: Colors.flatWhite.light,
+    backgroundColor: Colors.flatPowderBlue.light,
     borderRadius: 5,
     // Shadows, you can use https://ethercreative.github.io/react-native-shadow-generator/
     shadowColor: Colors.flatBlack.dark,
